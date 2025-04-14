@@ -44,6 +44,11 @@ $IDENTITY_TENANT=$(az aks show --name $CLUSTER_NAME --resource-group $RESOURCE_G
 export KEYVAULT_SCOPE=$(az keyvault show --name $KEYVAULT_NAME --query id -o tsv)
 
 az role assignment create --role "Key Vault Administrator" --assignee $USER_ASSIGNED_CLIENT_ID --scope $KEYVAULT_SCOPE
+
+For AZ Cloud Shell
+$KEYVAULT_SCOPE=$(az keyvault show --name $KEYVAULT_NAME --query id -o tsv)
+
+az role assignment create --role "Key Vault Administrator" --assignee $USER_ASSIGNED_CLIENT_ID --scope $KEYVAULT_SCOPE
 ```
 
 ### Get the AKS cluster OIDC Issuer URL 
@@ -51,13 +56,21 @@ az role assignment create --role "Key Vault Administrator" --assignee $USER_ASSI
 ```
 export AKS_OIDC_ISSUER="$(az aks show --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --query "oidcIssuerProfile.issuerUrl" -o tsv)"
 echo $AKS_OIDC_ISSUER
+
+For AZ Cloud Shell
+$AKS_OIDC_ISSUER="$(az aks show --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --query "oidcIssuerProfile.issuerUrl" -o tsv)"
+echo $AKS_OIDC_ISSUER
 ```
 
 ### Create the service account for the pod
 
 ```
 export SERVICE_ACCOUNT_NAME="workload-identity-sa"
-export SERVICE_ACCOUNT_NAMESPACE="default" 
+export SERVICE_ACCOUNT_NAMESPACE="default"
+
+For AZ Cloud Shell
+$SERVICE_ACCOUNT_NAME="workload-identity-sa"
+$SERVICE_ACCOUNT_NAMESPACE="default" 
 ```
 
 ```
@@ -75,7 +88,10 @@ EOF
 ### Setup Federation
 
 ```
-export FEDERATED_IDENTITY_NAME="aksfederatedidentity" 
+export FEDERATED_IDENTITY_NAME="aksfederatedidentity"
+
+For AZ Cloud Shell
+$FEDERATED_IDENTITY_NAME="aksfederatedidentity"
 
 az identity federated-credential create --name $FEDERATED_IDENTITY_NAME --identity-name $UAMI --resource-group $RESOURCE_GROUP --issuer ${AKS_OIDC_ISSUER} --subject system:serviceaccount:${SERVICE_ACCOUNT_NAMESPACE}:${SERVICE_ACCOUNT_NAME}
 ```
