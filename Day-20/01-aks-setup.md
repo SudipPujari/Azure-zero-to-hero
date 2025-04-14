@@ -12,6 +12,9 @@ az group create --name keyvault-demo --location eastus
 
 ```
 az aks create --name keyvault-demo-cluster -g keyvault-demo --node-count 1 --enable-addons azure-keyvault-secrets-provider --enable-oidc-issuer --enable-workload-identity
+
+below worked for PowerShell 2025-Apr
+az aks create -n keyvault-demo-cluster -g keyvault-demo --node-count 1 --node-vm-size standard_a2_v2 --enable-addons azure-keyvault-secrets-provider --enable-oidc-issuer --enable-workload-identity --generate-ssh-keys 
 ```
 
 ### Get the Kubernetes cluster credentials (Update kubeconfig)
