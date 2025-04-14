@@ -34,5 +34,5 @@ kubectl get pods -n kube-system -l 'app in (secrets-store-csi-driver,secrets-sto
 - Create a key vault with Azure role-based access control (Azure RBAC).
 
 ```
-az keyvault create -n aks-demo-abhi -g keyvault-demo -l eastus --enable-rbac-authorization
+az keyvault create -n aks-demo-Sudip -g keyvault-demo -l eastus --enable-rbac-authorization
 ```
