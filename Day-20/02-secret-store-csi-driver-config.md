@@ -12,6 +12,16 @@ export CLUSTER_NAME=keyvault-demo-cluster
 az account set --subscription $SUBSCRIPTION_ID
 ```
 
+Below worked for Az Cloude Shell
+
+$SUBSCRIPTION_ID="558530a5-db3c-4d02-a3b3-3dca64a2beaa"
+$RESOURCE_GROUP="keyvault-demo"
+$UAMI="azurekeyvaultsecretsprovider-keyvault-demo-cluster"
+$KEYVAULT_NAME="aks-demo-Sudip"
+$CLUSTER_NAME="keyvault-demo-cluster"
+
+az account set --subscription $SUBSCRIPTION_ID
+
 ### Create a managed identity
 
 ```
