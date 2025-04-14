@@ -10,7 +10,7 @@ export KEYVAULT_NAME=aks-demo-abhi
 export CLUSTER_NAME=keyvault-demo-cluster
 
 az account set --subscription $SUBSCRIPTION_ID
-```
+
 
 Below worked for Az Cloude Shell
 
@@ -21,6 +21,7 @@ $KEYVAULT_NAME="aks-demo-Sudip"
 $CLUSTER_NAME="keyvault-demo-cluster"
 
 az account set --subscription $SUBSCRIPTION_ID
+```
 
 ### Create a managed identity
 
