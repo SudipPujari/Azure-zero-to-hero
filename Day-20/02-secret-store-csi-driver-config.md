@@ -10,9 +10,9 @@ export KEYVAULT_NAME=aks-demo-abhi
 export CLUSTER_NAME=keyvault-demo-cluster
 
 az account set --subscription $SUBSCRIPTION_ID
-
-
-Below worked for Az Cloude Shell
+```
+```
+**For Az Cloude Shell**
 
 $SUBSCRIPTION_ID="558530a5-db3c-4d02-a3b3-3dca64a2beaa"
 $RESOURCE_GROUP="keyvault-demo"
@@ -30,8 +30,9 @@ az identity create --name $UAMI --resource-group $RESOURCE_GROUP
 
 export USER_ASSIGNED_CLIENT_ID="$(az identity show -g $RESOURCE_GROUP --name $UAMI --query 'clientId' -o tsv)"
 export IDENTITY_TENANT=$(az aks show --name $CLUSTER_NAME --resource-group $RESOURCE_GROUP --query identity.tenantId -o tsv)
-
-For AZ Cloud Shell
+```
+```
+**For AZ Cloud Shell**
 az identity create --name $UAMI --resource-group $RESOURCE_GROUP
 
 $USER_ASSIGNED_CLIENT_ID=$(az identity show -g $RESOURCE_GROUP --name $UAMI --query 'clientId' -o tsv)
@@ -44,8 +45,9 @@ $IDENTITY_TENANT=$(az aks show --name $CLUSTER_NAME --resource-group $RESOURCE_G
 export KEYVAULT_SCOPE=$(az keyvault show --name $KEYVAULT_NAME --query id -o tsv)
 
 az role assignment create --role "Key Vault Administrator" --assignee $USER_ASSIGNED_CLIENT_ID --scope $KEYVAULT_SCOPE
-
-For AZ Cloud Shell
+```
+```
+**For AZ Cloud Shell**
 $KEYVAULT_SCOPE=$(az keyvault show --name $KEYVAULT_NAME --query id -o tsv)
 
 az role assignment create --role "Key Vault Administrator" --assignee $USER_ASSIGNED_CLIENT_ID --scope $KEYVAULT_SCOPE
@@ -56,8 +58,9 @@ az role assignment create --role "Key Vault Administrator" --assignee $USER_ASSI
 ```
 export AKS_OIDC_ISSUER="$(az aks show --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --query "oidcIssuerProfile.issuerUrl" -o tsv)"
 echo $AKS_OIDC_ISSUER
-
-For AZ Cloud Shell
+```
+```
+**For AZ Cloud Shell**
 $AKS_OIDC_ISSUER="$(az aks show --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --query "oidcIssuerProfile.issuerUrl" -o tsv)"
 echo $AKS_OIDC_ISSUER
 ```
@@ -82,7 +85,7 @@ EOF
 ```
 
 ```
-For AZ Cloud Shell
+**For AZ Cloud Shell**
 $SERVICE_ACCOUNT_NAME="workload-identity-sa"
 $SERVICE_ACCOUNT_NAMESPACE="default" 
 ```
@@ -94,9 +97,9 @@ metadata:
   annotations:
     azure.workload.identity/client-id: ${USER_ASSIGNED_CLIENT_ID}
   name: ${SERVICE_ACCOUNT_NAME}
-  namespace: ${SERVICE_ACCOUNT_NAMESPACE}" | tee file.yaml
+  namespace: ${SERVICE_ACCOUNT_NAMESPACE}" | tee file1.yaml
 
-kubectl apply -f file.yaml
+kubectl apply -f file1.yaml
 ```
 
 ### Setup Federation
@@ -104,7 +107,10 @@ kubectl apply -f file.yaml
 ```
 export FEDERATED_IDENTITY_NAME="aksfederatedidentity"
 
-For AZ Cloud Shell
+az identity federated-credential create --name $FEDERATED_IDENTITY_NAME --identity-name $UAMI --resource-group $RESOURCE_GROUP --issuer ${AKS_OIDC_ISSUER} --subject system:serviceaccount:${SERVICE_ACCOUNT_NAMESPACE}:${SERVICE_ACCOUNT_NAME}
+```
+```
+**For AZ Cloud Shell**
 $FEDERATED_IDENTITY_NAME="aksfederatedidentity"
 
 az identity federated-credential create --name $FEDERATED_IDENTITY_NAME --identity-name $UAMI --resource-group $RESOURCE_GROUP --issuer ${AKS_OIDC_ISSUER} --subject system:serviceaccount:${SERVICE_ACCOUNT_NAMESPACE}:${SERVICE_ACCOUNT_NAME}
@@ -140,3 +146,30 @@ spec:
 EOF
 ```
 
+```
+**For AZ Cloud Shell**
+echo "apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: azure-kvname-wi 
+spec:
+  provider: azure
+  parameters:
+    usePodIdentity: """false"""
+    clientID: ${USER_ASSIGNED_CLIENT_ID} 
+    keyvaultName: ${KEYVAULT_NAME}       
+    cloudName:  """"                        
+    objects:  |
+      array:
+        - |
+          objectName: secret1             
+          objectType: secret              
+          objectVersion:""""                
+        - |
+          objectName: key1                
+          objectType: key
+          objectVersion: """"
+    tenantId: ${IDENTITY_TENANT}" | tee file2.yaml
+
+kubectl apply -f file2.yaml
+```
